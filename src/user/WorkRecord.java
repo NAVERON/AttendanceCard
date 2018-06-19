@@ -86,8 +86,9 @@ public class WorkRecord {
         return record_time;
     }
 
-    public void setRecord_time(String record_time) {
-        this.record_time = record_time;
+    public void setRecord_time(Date record_time) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:MM:ss");
+        this.record_time = sdf.format(record_time);
     }
 
     public String getOwner() {

@@ -118,12 +118,52 @@ public class SqliteWorkRecodDAO implements WorkRecordDAO{
 
     @Override
     public boolean updateWorkrecord(WorkRecord workrecord) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        try {
+            connection = DriverManager.getConnection(protocol + dbName);
+            String update = "UPDATE workrecords SET "
+                    + "owner = ?, "
+                    + "work_name = ?, "
+                    + "system_name = ?, "
+                    + "work_acount = ?, "
+                    + "work_content = ?, "
+                    + "record_time = ?, "
+                    + "isDraft = ? "
+                    + "WHERE id = ?";
+            preparedStatement = connection.prepareStatement(update);
+            preparedStatement.setString(1, workrecord.getOwner());
+            preparedStatement.setString(2, workrecord.getWork_name());
+            preparedStatement.setString(3, workrecord.getSystem_name());
+            preparedStatement.setDouble(4, workrecord.getWork_acount());
+            preparedStatement.setString(5, workrecord.getWork_content());
+            preparedStatement.setString(6, workrecord.getRecord_time());
+            preparedStatement.setInt(7, workrecord.isDraft);
+            preparedStatement.setString(8, workrecord.getId());
+            preparedStatement.executeUpdate();
+            
+            connection.commit();
+            preparedStatement.close();
+        } catch (SQLException ex) {
+        }
+        return false;
     }
 
     @Override
     public boolean deleteWorkrecord(WorkRecord workrecord) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        try {
+            connection = DriverManager.getConnection(protocol + dbName);
+            
+            String delete = "DELETE FROM workrecords WHERE id = ?";
+            preparedStatement = connection.prepareStatement(delete);
+            preparedStatement.setString(1, workrecord.getId());
+            preparedStatement.executeUpdate();
+            
+            connection.commit();
+            preparedStatement.close();
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(DerbyWorkRecordDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
     }
 
     @Override
@@ -161,7 +201,39 @@ public class SqliteWorkRecodDAO implements WorkRecordDAO{
 
     @Override
     public List<WorkRecord> findWorkrecordisDraft(boolean isDraft) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        int is;
+        if ( isDraft ) {
+            is = 1;
+        } else {
+            is = 0;
+        }
+        try {
+            String findByisDraft = "SELECT * FROM workrecords WHERE isDraft = ?";
+            preparedStatement = connection.prepareStatement(findByisDraft);
+            preparedStatement.setInt(1, is);
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:MM:ss");
+                java.util.Date now = sdf.parse(rs.getString("record_time"));
+                WorkRecord workrecord = new WorkRecord(
+                        rs.getString("owner"),
+                        rs.getString("work_name"),
+                        rs.getString("system_name"),
+                        rs.getDouble("work_acount"),
+                        rs.getString("work_content"),
+                        now,
+                        rs.getInt("isDraft")
+                );
+                RECORDS.add(workrecord);
+            }
+            connection.commit();
+            preparedStatement.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(DerbyWorkRecordDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ParseException ex) {
+            Logger.getLogger(SqliteWorkRecodDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return RECORDS;
     }
 
     

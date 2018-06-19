@@ -118,7 +118,7 @@ public class DerbyWorkRecordDAO implements WorkRecordDAO {  //不同的数据库
         try {
             connection = DriverManager.getConnection(protocol + dbName);
             dbAccess.update(connection,
-                    "UPDATE workrecords SET"
+                    "UPDATE workrecords SET "
                     + "owner = ?, "
                     + "work_name = ?, "
                     + "system_name = ?, "
