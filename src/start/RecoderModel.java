@@ -20,19 +20,13 @@ public class RecoderModel {
         this.workrecordDAO.setup();
     }
 
-    public void addNewRecord(String owner, String work_name, String system_name, double work_acount, String work_content, Date record_time, int isDraft) {
-
-        WorkRecord workrecord = new WorkRecord(owner, work_name, system_name, work_acount, work_content, record_time, isDraft);
-        System.out.println(workrecord.toString());  ////////////////////////////////////////////////输出测试数据
-        this.workrecordDAO.insertWorkrecord(workrecord);
-    }
     public void addNewRecord(WorkRecord workRecord){
-        System.out.println(workRecord.toString());  //////////////////////////////////////////////
+        System.out.println("添加的记录数据："+workRecord.toString());
         this.workrecordDAO.insertWorkrecord(workRecord);
     }
     
     public void deleteRecord(WorkRecord workrecord) {
-        System.out.println("delete workrecord : " + workrecord.toString());
+        System.out.println("将要删除的数据 : " + workrecord.toString());
         this.workrecordDAO.deleteWorkrecord(workrecord);
     }
 
@@ -41,7 +35,6 @@ public class RecoderModel {
         if (workrecords.isEmpty()) {
             return null;
         }
-        System.out.println("输出查询到的数据 : \n" + workrecords.toString());
         return workrecords;
     }
 

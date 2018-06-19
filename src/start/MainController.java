@@ -5,10 +5,7 @@ import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
-import javafx.application.Platform;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -71,7 +68,7 @@ public class MainController implements Initializable {
     private Button test_db;
     
     // 自定义变量
-    public User loggedUser = null; // 指向当前登录的用户
+    private User loggedUser = null; // 指向当前登录的用户
     private Stage primaryStage = null;
     private RecoderModel model = null; // 模型里面包含了数据控制，用来后台数据和前台数据的桥接
     private String work_name, system_name, work_content;
@@ -87,14 +84,16 @@ public class MainController implements Initializable {
         List<WorkRecord> drafts = model.getIsDraft(true);
         List<WorkRecord> submits = model.getIsDraft(false);
         if (drafts != null && submits != null) {
+            System.out.println("下面是草稿的数据 : ");
             System.out.println(drafts.toString());
+            System.out.println("下面是提交的数据 : ");
             System.out.println(submits.toString());
         }
     }
     
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        //从数据库读取并更新界面 -------------------------- 可以被动载入
+        //从数据库读取并更新界面
         List<WorkRecord> drafts = model.getIsDraft(true);
         List<WorkRecord> submits = model.getIsDraft(false);
         if (drafts != null) {
@@ -107,6 +106,8 @@ public class MainController implements Initializable {
                 submit_list.getChildren().add(new Submit_WorkRecord(workrecord, this));
             }
         }
+        
+        print_db();
     }
     
     @FXML
@@ -119,12 +120,9 @@ public class MainController implements Initializable {
             return;
         }
         WorkRecord workrecord = new WorkRecord(loggedUser.getName(), work_name, system_name, work_acount, work_content, new Date(), 1);
-        System.out.println("main controller : save draft : " + workrecord.toString());
-        //添加到数据库
         model.addNewRecord(workrecord);
-        //界面变化
         draft_list.getChildren().add(new Draft_WorkRecord(workrecord, this));
-
+        
         clearAllTextArea();
     }
     
@@ -138,12 +136,14 @@ public class MainController implements Initializable {
             return;
         }
         WorkRecord workrecord = new WorkRecord(loggedUser.getName(), work_name, system_name, work_acount, work_content, new Date(), 0);
-        SubmitToRemote submitToremote = new SubmitToRemote(workrecord);
         //数据库添加一个记录
         model.addNewRecord(workrecord);
         
         submit_list.getChildren().add(new Submit_WorkRecord(workrecord, this));
         clearAllTextArea();
+        //远程提交数据，异步处理，如果出错，重新从数据提取提交
+        SubmitToRemote submitToremote = new SubmitToRemote(workrecord);
+        submitToremote.run();
     }
 
     @FXML
@@ -214,7 +214,7 @@ public class MainController implements Initializable {
                 this.loggedUser = new User(name, password);  //或者爬取用户图片，设置成ImageView
                 this.login_btn.setText(name);
                 loginStage.close();
-
+                
                 //这里需要独立线程处理，否则会卡住
                 //以前这里新建线程   创建数据表，这个动作在程序启动时已经做好了
             } else {
@@ -269,20 +269,16 @@ public class MainController implements Initializable {
     }
     
     public void deleteSelected(WorkRecord workrecord, HBox delHBox){
-        model.deleteRecord(workrecord);
         //界面更新
         if(workrecord.isDraft == 1){
             draft_list.getChildren().remove(delHBox);
         }else if(workrecord.isDraft == 0){
             submit_list.getChildren().remove(delHBox);
         }
+        
+        model.deleteRecord(workrecord);
     }
     
-    public void showAll(){  //测试数据库数据
-        List<WorkRecord> list = model.getIsDraft(true);
-        list.addAll(model.getIsDraft(false));
-        System.out.println(list);
-    }
     public boolean clearAllTextArea() {
         work_1_textarea.clear();
         work_2_textarea.clear();

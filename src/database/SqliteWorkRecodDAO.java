@@ -34,7 +34,7 @@ public class SqliteWorkRecodDAO implements WorkRecordDAO{
             + "work_content TEXT,"
             + "record_time TEXT,"
             + "isDraft INTEGER"
-            + ")";
+            + ");";
 
     @Override
     public void setup() {
@@ -96,7 +96,7 @@ public class SqliteWorkRecodDAO implements WorkRecordDAO{
             long acount = 0L;
             connect();
 
-            String insert = "INSERT INTO workrecords (id, owner, work_name, system_name, work_acount, work_content, record_time, isDraft) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            String insert = "INSERT INTO workrecords (id, owner, work_name, system_name, work_acount, work_content, record_time, isDraft) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
             preparedStatement = connection.prepareStatement(insert);
             preparedStatement.setString(1, workrecord.getId());
             preparedStatement.setString(2, workrecord.getOwner());
@@ -130,7 +130,7 @@ public class SqliteWorkRecodDAO implements WorkRecordDAO{
                     + "work_content = ?, "
                     + "record_time = ?, "
                     + "isDraft = ? "
-                    + "WHERE id = ?";
+                    + "WHERE id = ?;";
             preparedStatement = connection.prepareStatement(update);
             preparedStatement.setString(1, workrecord.getOwner());
             preparedStatement.setString(2, workrecord.getWork_name());
@@ -154,8 +154,7 @@ public class SqliteWorkRecodDAO implements WorkRecordDAO{
     public boolean deleteWorkrecord(WorkRecord workrecord) {
         try {
             connect();
-            
-            String delete = "DELETE FROM workrecords WHERE id = ?";
+            String delete = "DELETE FROM workrecords WHERE id = ?;";
             preparedStatement = connection.prepareStatement(delete);
             preparedStatement.setString(1, workrecord.getId());
             preparedStatement.executeUpdate();
@@ -174,7 +173,7 @@ public class SqliteWorkRecodDAO implements WorkRecordDAO{
         try {
             connect();
 
-            String findById = "SELECT * FROM workrecords WHERE id = ?";
+            String findById = "SELECT * FROM workrecords WHERE id = ?;";
             preparedStatement = connection.prepareStatement(findById);
             preparedStatement.setString(1, id);
             ResultSet rs = preparedStatement.executeQuery();
@@ -212,7 +211,7 @@ public class SqliteWorkRecodDAO implements WorkRecordDAO{
         }
         try {
             connect();
-            String findByisDraft = "SELECT * FROM workrecords WHERE isDraft = ?";
+            String findByisDraft = "SELECT * FROM workrecords WHERE isDraft = ?;";
             preparedStatement = connection.prepareStatement(findByisDraft);
             preparedStatement.setInt(1, is);
             ResultSet rs = preparedStatement.executeQuery();
