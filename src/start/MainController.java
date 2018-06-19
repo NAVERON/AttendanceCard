@@ -122,6 +122,7 @@ public class MainController implements Initializable {
         }
         WorkRecord workrecord = new WorkRecord(loggedUser.getName(), work_name, system_name, work_acount, work_content, new Date(), 1);
         System.out.println("main controller : save draft : " + workrecord.toString());
+        //添加到数据库
         model.addNewRecord(workrecord);
         //界面变化
         draft_list.getChildren().add(new Draft_WorkRecord(workrecord, this));
@@ -140,7 +141,7 @@ public class MainController implements Initializable {
         }
         WorkRecord workrecord = new WorkRecord(loggedUser.getName(), work_name, system_name, work_acount, work_content, new Date(), 0);
         SubmitToRemote submitToremote = new SubmitToRemote(workrecord);
-        
+        //数据库添加一个记录
         model.addNewRecord(workrecord);
         
         submit_list.getChildren().add(new Submit_WorkRecord(workrecord, this));

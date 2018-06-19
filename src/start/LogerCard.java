@@ -2,6 +2,7 @@ package start;
 
 
 import database.DerbyWorkRecordDAO;
+import database.SqliteWorkRecodDAO;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -12,7 +13,8 @@ public class LogerCard extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("../ui/Main.fxml"));
-        RecoderModel model = new RecoderModel(new DerbyWorkRecordDAO());
+        //RecoderModel model = new RecoderModel(new DerbyWorkRecordDAO());
+        RecoderModel model = new RecoderModel(new SqliteWorkRecodDAO());
         MainController maincontroller = new MainController(primaryStage, model);  //设置控制器
         loader.setController(maincontroller);
 

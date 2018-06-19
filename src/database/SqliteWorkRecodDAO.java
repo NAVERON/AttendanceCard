@@ -28,7 +28,7 @@ public class SqliteWorkRecodDAO implements WorkRecordDAO{
 
     private String protocol = "jdbc:sqlite:";
     private String dbName = "literecords.db";
-    private String createString = "CREATE TABLE IF NOT EXIST workrecords ("
+    private String createString = "CREATE TABLE workrecords ("
             + "id VARCHAR(30),"
             + "owner VARCHAR(30),"
             + "work_name VARCHAR(100),"
@@ -43,11 +43,22 @@ public class SqliteWorkRecodDAO implements WorkRecordDAO{
     public void setup() {
         try {
             connection = DriverManager.getConnection(protocol + dbName);
-            statement = connection.createStatement();
-            statement.setQueryTimeout(10);  // set timeout to 30 sec.
+            DatabaseMetaData dbmd = connection.getMetaData();
+            ResultSet rs = dbmd.getTables(null, null, null, new String[]{"TABLE"});
+            if (!rs.next()) {
+                statement = connection.createStatement();
+                statement.setQueryTimeout(10);  // set timeout to 30 sec.
+                statement.executeUpdate(createString);
+                statement.close();
 
-            statement.executeUpdate(createString);
-            statement.close();
+                Alert close_database_fault = new Alert(Alert.AlertType.INFORMATION);
+                close_database_fault.setContentText("数据库正在创建表");
+                close_database_fault.showAndWait();
+            } else {
+                Alert database_exist_alert = new Alert(Alert.AlertType.INFORMATION);
+                database_exist_alert.setContentText("表已经创建");
+                database_exist_alert.showAndWait();
+            }
         } catch (SQLException ex) {
             Logger.getLogger(DerbyWorkRecordDAO.class.getName()).log(Level.SEVERE, null, ex);
 
@@ -75,6 +86,9 @@ public class SqliteWorkRecodDAO implements WorkRecordDAO{
         try {
             if (statement != null) {
                 statement.close();
+            }
+            if(preparedStatement != null){
+                preparedStatement.close();
             }
             if (connection != null) {
                 connection.close();
@@ -143,6 +157,7 @@ public class SqliteWorkRecodDAO implements WorkRecordDAO{
             connection.commit();
             preparedStatement.close();
         } catch (SQLException ex) {
+            Logger.getLogger(DerbyWorkRecordDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
     }

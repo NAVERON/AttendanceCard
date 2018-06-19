@@ -5,7 +5,6 @@ import java.util.List;
 
 import user.WorkRecord;
 import database.WorkRecordDAO;
-import javafx.scene.control.Alert;
 
 /**
  * 连接控制和数据存储的桥接
