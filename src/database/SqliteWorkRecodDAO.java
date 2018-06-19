@@ -42,7 +42,7 @@ public class SqliteWorkRecodDAO implements WorkRecordDAO{
     @Override
     public void setup() {
         try {
-            connection = DriverManager.getConnection(protocol + dbName);
+            connect();
             DatabaseMetaData dbmd = connection.getMetaData();
             ResultSet rs = dbmd.getTables(null, null, null, new String[]{"TABLE"});
             if (!rs.next()) {
@@ -106,7 +106,7 @@ public class SqliteWorkRecodDAO implements WorkRecordDAO{
     public long insertWorkrecord(WorkRecord workrecord) {
         try {
             long acount = 0L;
-            connection = DriverManager.getConnection(protocol + dbName);
+            connect();
 
             String insert = "INSERT INTO workrecords (id, owner, work_name, system_name, work_acount, work_content, record_time, isDraft) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             preparedStatement = connection.prepareStatement(insert);
@@ -120,7 +120,7 @@ public class SqliteWorkRecodDAO implements WorkRecordDAO{
             preparedStatement.setInt(8, workrecord.isDraft);
             acount = preparedStatement.executeUpdate();
 
-            connection.commit();
+            //connection.commit();
             preparedStatement.close();
 
             return acount;
@@ -133,7 +133,7 @@ public class SqliteWorkRecodDAO implements WorkRecordDAO{
     @Override
     public boolean updateWorkrecord(WorkRecord workrecord) {
         try {
-            connection = DriverManager.getConnection(protocol + dbName);
+            connect();
             String update = "UPDATE workrecords SET "
                     + "owner = ?, "
                     + "work_name = ?, "
@@ -154,7 +154,7 @@ public class SqliteWorkRecodDAO implements WorkRecordDAO{
             preparedStatement.setString(8, workrecord.getId());
             preparedStatement.executeUpdate();
             
-            connection.commit();
+            //connection.commit();
             preparedStatement.close();
         } catch (SQLException ex) {
             Logger.getLogger(DerbyWorkRecordDAO.class.getName()).log(Level.SEVERE, null, ex);
@@ -165,14 +165,14 @@ public class SqliteWorkRecodDAO implements WorkRecordDAO{
     @Override
     public boolean deleteWorkrecord(WorkRecord workrecord) {
         try {
-            connection = DriverManager.getConnection(protocol + dbName);
+            connect();
             
             String delete = "DELETE FROM workrecords WHERE id = ?";
             preparedStatement = connection.prepareStatement(delete);
             preparedStatement.setString(1, workrecord.getId());
             preparedStatement.executeUpdate();
             
-            connection.commit();
+            //connection.commit();
             preparedStatement.close();
             return true;
         } catch (SQLException ex) {
@@ -184,7 +184,7 @@ public class SqliteWorkRecodDAO implements WorkRecordDAO{
     @Override
     public List<WorkRecord> findWorkrecordById(String id) {
         try {
-            connection = DriverManager.getConnection(protocol + dbName);
+            connect();
 
             String findById = "SELECT * FROM workrecords WHERE id = ?";
             preparedStatement = connection.prepareStatement(findById);
@@ -204,7 +204,7 @@ public class SqliteWorkRecodDAO implements WorkRecordDAO{
                 );
                 RECORDS.add(workrecord);
             }
-            connection.commit();
+            //connection.commit();
             preparedStatement.close();
         } catch (SQLException ex) {
             Logger.getLogger(DerbyWorkRecordDAO.class.getName()).log(Level.SEVERE, null, ex);
@@ -223,6 +223,7 @@ public class SqliteWorkRecodDAO implements WorkRecordDAO{
             is = 0;
         }
         try {
+            connect();
             String findByisDraft = "SELECT * FROM workrecords WHERE isDraft = ?";
             preparedStatement = connection.prepareStatement(findByisDraft);
             preparedStatement.setInt(1, is);
@@ -241,7 +242,7 @@ public class SqliteWorkRecodDAO implements WorkRecordDAO{
                 );
                 RECORDS.add(workrecord);
             }
-            connection.commit();
+            //connection.commit();
             preparedStatement.close();
         } catch (SQLException ex) {
             Logger.getLogger(DerbyWorkRecordDAO.class.getName()).log(Level.SEVERE, null, ex);

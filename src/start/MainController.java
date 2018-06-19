@@ -85,8 +85,10 @@ public class MainController implements Initializable {
         //输出数据库信息
         List<WorkRecord> drafts = model.getIsDraft(true);
         List<WorkRecord> submits = model.getIsDraft(false);
-        System.out.println(drafts.toString());
-        System.out.println(submits.toString());
+        if (drafts != null && submits != null) {
+            System.out.println(drafts.toString());
+            System.out.println(submits.toString());
+        }
     }
     
     @Override
@@ -97,8 +99,6 @@ public class MainController implements Initializable {
         //从数据库读取并更新界面 -------------------------- 可以被动载入
         List<WorkRecord> drafts = model.getIsDraft(true);
         List<WorkRecord> submits = model.getIsDraft(false);
-        //ObservableList<WorkRecord> drafts_ui = FXCollections.observableList(drafts);
-        //ObservableList<WorkRecord> submits_ui = FXCollections.observableList(submits);
         if (drafts != null) {
             for (WorkRecord workrecord : drafts) {
                 draft_list.getChildren().add(new Draft_WorkRecord(workrecord, this));
@@ -282,7 +282,7 @@ public class MainController implements Initializable {
     public void showContent(WorkRecord workrecord){
         this.work_1_textarea.setText(workrecord.getWork_name());
         this.work_2_textarea.setText(workrecord.getSystem_name());
-        this.work_3_textarea.setText(String.format( "%20.5", String.valueOf(workrecord.getWork_acount()) ));
+        this.work_3_textarea.setText(String.format( "%20.5", workrecord.getWork_acount() ));
         this.work_4_textarea.setText(workrecord.getWork_content());
     }
     
