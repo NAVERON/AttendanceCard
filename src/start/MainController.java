@@ -1,6 +1,7 @@
 package start;
 
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -70,7 +71,7 @@ public class MainController implements Initializable {
     private Button test_db;
     
     // 自定义变量
-    private User loggedUser = null; // 指向当前登录的用户
+    public User loggedUser = null; // 指向当前登录的用户
     private Stage primaryStage = null;
     private RecoderModel model = null; // 模型里面包含了数据控制，用来后台数据和前台数据的桥接
     private String work_name, system_name, work_content;
@@ -93,9 +94,6 @@ public class MainController implements Initializable {
     
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        if(loggedUser == null){
-            showLoginStage();
-        }
         //从数据库读取并更新界面 -------------------------- 可以被动载入
         List<WorkRecord> drafts = model.getIsDraft(true);
         List<WorkRecord> submits = model.getIsDraft(false);
@@ -166,17 +164,6 @@ public class MainController implements Initializable {
         
         this.login_btn.setText("登陆");
         this.loggedUser = null;
-        
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    model.close();
-                } catch (Exception ex) {
-                    Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        });
     }
 
     @FXML
@@ -229,16 +216,7 @@ public class MainController implements Initializable {
                 loginStage.close();
 
                 //这里需要独立线程处理，否则会卡住
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            model.setup();
-                        } catch (Exception ex) {
-                            Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                    }
-                });
+                //以前这里新建线程   创建数据表，这个动作在程序启动时已经做好了
             } else {
                 Alert login_error_alert = new Alert(AlertType.ERROR);
                 login_error_alert.setHeaderText("签到错误");
@@ -282,12 +260,16 @@ public class MainController implements Initializable {
     public void showContent(WorkRecord workrecord){
         this.work_1_textarea.setText(workrecord.getWork_name());
         this.work_2_textarea.setText(workrecord.getSystem_name());
-        this.work_3_textarea.setText(String.format( "%20.5", workrecord.getWork_acount() ));
+        
+        Double temp_double = workrecord.getWork_acount();
+        DecimalFormat df = new DecimalFormat("#,##0.0000");
+        this.work_3_textarea.setText(df.format(temp_double));
+        
         this.work_4_textarea.setText(workrecord.getWork_content());
     }
     
     public void deleteSelected(WorkRecord workrecord, HBox delHBox){
-        //model.deleteRecord(workrecord);
+        model.deleteRecord(workrecord);
         //界面更新
         if(workrecord.isDraft == 1){
             draft_list.getChildren().remove(delHBox);

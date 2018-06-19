@@ -3,6 +3,8 @@ package start;
 
 import database.DerbyWorkRecordDAO;
 import database.SqliteWorkRecodDAO;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -17,11 +19,20 @@ public class LogerCard extends Application {
         RecoderModel model = new RecoderModel(new SqliteWorkRecodDAO());
         MainController maincontroller = new MainController(primaryStage, model);  //设置控制器
         loader.setController(maincontroller);
-
+        
         Scene scene = new Scene(loader.load());
         primaryStage.setScene(scene);
         primaryStage.setTitle("LogCard");
         primaryStage.show();
+        
+        primaryStage.setOnCloseRequest(event -> {
+            try {
+                model.close();
+            } catch (Exception ex) {
+                System.out.println("数据库关闭异常");
+                Logger.getLogger(LogerCard.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
     }
 
     public static void main(String[] args) {

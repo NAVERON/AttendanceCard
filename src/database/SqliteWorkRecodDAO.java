@@ -15,10 +15,7 @@ import java.util.logging.Logger;
 import javafx.scene.control.Alert;
 import user.WorkRecord;
 
-/**
- *
- * @author ERON
- */
+
 public class SqliteWorkRecodDAO implements WorkRecordDAO{
 
     private Connection connection = null;
@@ -29,14 +26,14 @@ public class SqliteWorkRecodDAO implements WorkRecordDAO{
     private String protocol = "jdbc:sqlite:";
     private String dbName = "literecords.db";
     private String createString = "CREATE TABLE workrecords ("
-            + "id VARCHAR(30),"
-            + "owner VARCHAR(30),"
-            + "work_name VARCHAR(100),"
-            + "system_name VARCHAR(100),"
-            + "work_acount DOUBLE,"
-            + "work_content VARCHAR(500),"
-            + "record_time VARCHAR(30),"
-            + "isDraft INT"
+            + "id TEXT,"
+            + "owner TEXT,"
+            + "work_name TEXT,"
+            + "system_name TEXT,"
+            + "work_acount REAL,"
+            + "work_content TEXT,"
+            + "record_time TEXT,"
+            + "isDraft INTEGER"
             + ")";
 
     @Override
@@ -46,25 +43,22 @@ public class SqliteWorkRecodDAO implements WorkRecordDAO{
             DatabaseMetaData dbmd = connection.getMetaData();
             ResultSet rs = dbmd.getTables(null, null, null, new String[]{"TABLE"});
             if (!rs.next()) {
+                System.out.println("创建表之前 : ");
                 statement = connection.createStatement();
-                statement.setQueryTimeout(10);  // set timeout to 30 sec.
+                statement.setQueryTimeout(5);
                 statement.executeUpdate(createString);
-                statement.close();
-
+                close();
+                System.out.println("创建表之后");
                 Alert close_database_fault = new Alert(Alert.AlertType.INFORMATION);
                 close_database_fault.setContentText("数据库正在创建表");
                 close_database_fault.showAndWait();
             } else {
-                Alert database_exist_alert = new Alert(Alert.AlertType.INFORMATION);
-                database_exist_alert.setContentText("表已经创建");
-                database_exist_alert.showAndWait();
+                System.out.println("数据库中表已经存在");
             }
         } catch (SQLException ex) {
             Logger.getLogger(DerbyWorkRecordDAO.class.getName()).log(Level.SEVERE, null, ex);
 
-            Alert create_database_fault = new Alert(Alert.AlertType.WARNING);
-            create_database_fault.setContentText("数据库创建失败");
-            create_database_fault.showAndWait();
+            System.out.println("数据库创建失败");
         }
     }
 
@@ -74,10 +68,7 @@ public class SqliteWorkRecodDAO implements WorkRecordDAO{
             connection = DriverManager.getConnection(protocol + dbName);
         } catch (SQLException ex) {
             Logger.getLogger(DerbyWorkRecordDAO.class.getName()).log(Level.SEVERE, null, ex);
-
-            Alert connect_database_fault = new Alert(Alert.AlertType.WARNING);
-            connect_database_fault.setContentText("数据库连接失败");
-            connect_database_fault.show();
+            System.out.println("数据库连接失败");
         }
     }
 
@@ -95,10 +86,7 @@ public class SqliteWorkRecodDAO implements WorkRecordDAO{
             }
         } catch (SQLException ex) {
             Logger.getLogger(DerbyWorkRecordDAO.class.getName()).log(Level.SEVERE, null, ex);
-
-            Alert close_database_fault = new Alert(Alert.AlertType.INFORMATION);
-            close_database_fault.setContentText("数据库正在关闭");
-            close_database_fault.show();
+            System.out.println("数据库关闭失败");
         }
     }
     
@@ -119,9 +107,9 @@ public class SqliteWorkRecodDAO implements WorkRecordDAO{
             preparedStatement.setString(7, workrecord.getRecord_time());
             preparedStatement.setInt(8, workrecord.isDraft);
             acount = preparedStatement.executeUpdate();
-
+            
             //connection.commit();
-            preparedStatement.close();
+            close();
 
             return acount;
         } catch (SQLException ex) {
@@ -155,7 +143,7 @@ public class SqliteWorkRecodDAO implements WorkRecordDAO{
             preparedStatement.executeUpdate();
             
             //connection.commit();
-            preparedStatement.close();
+            close();
         } catch (SQLException ex) {
             Logger.getLogger(DerbyWorkRecordDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -173,7 +161,7 @@ public class SqliteWorkRecodDAO implements WorkRecordDAO{
             preparedStatement.executeUpdate();
             
             //connection.commit();
-            preparedStatement.close();
+            close();
             return true;
         } catch (SQLException ex) {
             Logger.getLogger(DerbyWorkRecordDAO.class.getName()).log(Level.SEVERE, null, ex);
@@ -205,7 +193,7 @@ public class SqliteWorkRecodDAO implements WorkRecordDAO{
                 RECORDS.add(workrecord);
             }
             //connection.commit();
-            preparedStatement.close();
+            close();
         } catch (SQLException ex) {
             Logger.getLogger(DerbyWorkRecordDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ParseException ex) {
@@ -243,7 +231,7 @@ public class SqliteWorkRecodDAO implements WorkRecordDAO{
                 RECORDS.add(workrecord);
             }
             //connection.commit();
-            preparedStatement.close();
+            close();
         } catch (SQLException ex) {
             Logger.getLogger(DerbyWorkRecordDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ParseException ex) {

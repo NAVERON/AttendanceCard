@@ -18,25 +18,21 @@ public class RecoderModel {
     public RecoderModel(WorkRecordDAO workrecordDAO) throws Exception {
         this.workrecordDAO = workrecordDAO;
         this.workrecordDAO.setup();
-        
-        this.workrecordDAO.connect();
-    }
-
-    public void setup() throws Exception {  //创建数据库，应当在程序第一次运行就创建好
-        this.workrecordDAO.setup();
     }
 
     public void addNewRecord(String owner, String work_name, String system_name, double work_acount, String work_content, Date record_time, int isDraft) {
 
         WorkRecord workrecord = new WorkRecord(owner, work_name, system_name, work_acount, work_content, record_time, isDraft);
-        System.out.println(workrecord.toString());  ////////////////////////////////////////////////
+        System.out.println(workrecord.toString());  ////////////////////////////////////////////////输出测试数据
         this.workrecordDAO.insertWorkrecord(workrecord);
     }
     public void addNewRecord(WorkRecord workRecord){
+        System.out.println(workRecord.toString());  //////////////////////////////////////////////
         this.workrecordDAO.insertWorkrecord(workRecord);
     }
     
     public void deleteRecord(WorkRecord workrecord) {
+        System.out.println("delete workrecord : " + workrecord.toString());
         this.workrecordDAO.deleteWorkrecord(workrecord);
     }
 
@@ -45,6 +41,7 @@ public class RecoderModel {
         if (workrecords.isEmpty()) {
             return null;
         }
+        System.out.println("输出查询到的数据 : \n" + workrecords.toString());
         return workrecords;
     }
 

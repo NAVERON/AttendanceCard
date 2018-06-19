@@ -124,7 +124,7 @@ public class WorkRecord {
 
     @Override
     public String toString() {  //测试，并没有校验功能
-        return getId() + getOwner() + getRecord_time() + getSystem_name() + getWork_acount() + getWork_content();
+        return getId() +", "+ getOwner() +", "+ getRecord_time() +", "+ getSystem_name() +", "+ getWork_acount() +", "+ getWork_content() + "\n";
     }
 
     public void trueStruct() {  //需要从这里提炼出来数据
