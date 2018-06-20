@@ -82,7 +82,6 @@ public class MainController implements Initializable {
     @FXML
     public void print_db() {
         //输出数据库信息
-        System.out.println("输出数据库所有数据：");
         List<WorkRecord> drafts = model.getIsDraft(1);
         List<WorkRecord> submits = model.getIsDraft(0);
         if (drafts != null) {
@@ -111,7 +110,7 @@ public class MainController implements Initializable {
             }
         }
         
-        print_db();
+        //print_db();
     }
     
     @FXML
