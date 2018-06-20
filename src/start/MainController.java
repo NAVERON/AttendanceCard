@@ -1,11 +1,26 @@
 package start;
 
+import java.awt.AWTException;
+import java.awt.CheckboxMenuItem;
+import java.awt.Image;
+import java.awt.Menu;
+import java.awt.MenuItem;
+import java.awt.PopupMenu;
+import java.awt.SystemTray;
+import java.awt.Toolkit;
+import java.awt.TrayIcon;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import javafx.application.Platform;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -26,6 +41,8 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import ui.Draft_WorkRecord;
 import ui.Submit_WorkRecord;
 import user.SubmitToRemote;
@@ -66,6 +83,8 @@ public class MainController implements Initializable {
     private Button submit_btn; // Value injected by FXMLLoader
     @FXML
     private Button test_db;
+    @FXML
+    private Button minimum;
     
     // 自定义变量
     private User loggedUser = null; //指向当前登录的用户
@@ -289,5 +308,43 @@ public class MainController implements Initializable {
 
         return true;
     }
+    
+    @FXML
+    void minimum() {
+        if (!SystemTray.isSupported()) {
+            System.out.println("SystemTray is not supported");
+            return;
+        }
+        final PopupMenu popup = new PopupMenu();
+        URL url = this.getClass().getResource("..\\assets\\bulb.gif");
+        Image image = new ImageIcon(url).getImage();
 
+        final TrayIcon trayIcon = new TrayIcon(image);
+
+        final SystemTray tray = SystemTray.getSystemTray();
+
+        // Create a pop-up menu components
+        MenuItem aboutItem = new MenuItem("About");
+        Menu displayMenu = new Menu("Display");
+        MenuItem exitItem = new MenuItem("Exit");
+
+        //Add components to pop-up menu
+        popup.add(aboutItem);
+        popup.add(displayMenu);
+        popup.add(exitItem);
+
+        trayIcon.setPopupMenu(popup);
+
+        aboutItem.addActionListener(new ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                Platform.runLater(() -> primaryStage.show());
+            }
+        });
+
+        try {
+            tray.add(trayIcon);
+        } catch (AWTException e) {
+            System.out.println("TrayIcon could not be added.");
+        }
+    }
 }

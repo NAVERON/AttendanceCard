@@ -1,7 +1,5 @@
 package start;
 
-
-import database.DerbyWorkRecordDAO;
 import database.SqliteWorkRecodDAO;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,7 +23,7 @@ public class LogerCard extends Application {
         primaryStage.setScene(scene);
         primaryStage.setTitle("LogCard");
         primaryStage.show();
-        
+
         primaryStage.setOnCloseRequest(event -> {
             try {
                 model.close();

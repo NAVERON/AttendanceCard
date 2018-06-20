@@ -23,7 +23,15 @@
                         <Insets right="20.0" />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="test_db" mnemonicParsing="false" onAction="#print_db" text="测试数据库" />
+                  <Button fx:id="test_db" mnemonicParsing="false" onAction="#print_db" text="测试数据库">
+                     <HBox.margin>
+                        <Insets right="20.0" />
+                     </HBox.margin></Button>
+                  <Button fx:id="minimum" mnemonicParsing="false" onAction="#minimum" text="最小化到托盘">
+                     <HBox.margin>
+                        <Insets right="20.0" />
+                     </HBox.margin>
+                  </Button>
                </children>
                <VBox.margin>
                   <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
