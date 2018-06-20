@@ -23,7 +23,7 @@ public class WorkRecord {
         this.work_acount = work_acount;
         this.work_content = work_content;
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:MM:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         this.record_time = sdf.format(record_time);
         this.isDraft = isDraft;
 
@@ -40,7 +40,7 @@ public class WorkRecord {
         int result = 1;
         result = prime * result + ((owner == null) ? 0 : owner.hashCode());
         result = prime * result + ((work_name == null) ? 0 : work_name.hashCode());
-        result = prime * result + record_time.hashCode();
+        result = prime * result + record_time.hashCode() + isDraft;
         return result;
     }
 
@@ -124,7 +124,7 @@ public class WorkRecord {
 
     @Override
     public String toString() {  //测试，并没有校验功能
-        return getId() +", "+ getOwner() +", "+ getRecord_time() +", "+ getSystem_name() +", "+ getWork_acount() +", "+ getWork_content() + "\n";
+        return getId() +", "+ getOwner() +", "+ getWork_name()+", "+ getSystem_name() +", "+ getWork_acount() +", "+ getWork_content() + ", "+getRecord_time() +", "+isDraft+"\n";
     }
 
     public void trueStruct() {  //需要从这里提炼出来数据

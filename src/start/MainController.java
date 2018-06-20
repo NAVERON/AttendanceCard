@@ -81,8 +81,9 @@ public class MainController implements Initializable {
     @FXML
     public void print_db(){
         //输出数据库信息
-        List<WorkRecord> drafts = model.getIsDraft(true);
-        List<WorkRecord> submits = model.getIsDraft(false);
+        System.out.println("输出数据库所有数据：");
+        List<WorkRecord> drafts = model.getIsDraft(1);
+        List<WorkRecord> submits = model.getIsDraft(0);
         if (drafts != null && submits != null) {
             System.out.println("下面是草稿的数据 : ");
             System.out.println(drafts.toString());
@@ -94,8 +95,8 @@ public class MainController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         //从数据库读取并更新界面
-        List<WorkRecord> drafts = model.getIsDraft(true);
-        List<WorkRecord> submits = model.getIsDraft(false);
+        List<WorkRecord> drafts = model.getIsDraft(1);
+        List<WorkRecord> submits = model.getIsDraft(0);
         if (drafts != null) {
             for (WorkRecord workrecord : drafts) {
                 draft_list.getChildren().add(new Draft_WorkRecord(workrecord, this));

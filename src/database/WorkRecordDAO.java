@@ -13,5 +13,5 @@ public interface WorkRecordDAO extends DAO {
 
     public List<WorkRecord> findWorkrecordById(String id);
 
-    public List<WorkRecord> findWorkrecordisDraft(boolean isDraft);
+    public List<WorkRecord> findWorkrecordisDraft(int isDraft);
 }

@@ -30,7 +30,7 @@ public class RecoderModel {
         this.workrecordDAO.deleteWorkrecord(workrecord);
     }
 
-    public List<WorkRecord> getIsDraft(boolean isDraft) {  //根据输入   确定是要草稿还是已经提交的历史纪录
+    public List<WorkRecord> getIsDraft(int isDraft) {  //根据输入   确定是要草稿还是已经提交的历史纪录
         List<WorkRecord> workrecords = workrecordDAO.findWorkrecordisDraft(isDraft);
         if (workrecords.isEmpty()) {
             return null;

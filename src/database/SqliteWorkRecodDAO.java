@@ -21,7 +21,6 @@ public class SqliteWorkRecodDAO implements WorkRecordDAO{
     private Connection connection = null;
     private Statement statement = null;
     private PreparedStatement preparedStatement = null;
-    private List<WorkRecord> RECORDS = new LinkedList<WorkRecord>();
 
     private String protocol = "jdbc:sqlite:";
     private String dbName = "literecords.db";
@@ -77,12 +76,15 @@ public class SqliteWorkRecodDAO implements WorkRecordDAO{
         try {
             if (statement != null) {
                 statement.close();
+                statement = null;
             }
             if(preparedStatement != null){
                 preparedStatement.close();
+                preparedStatement = null;
             }
             if (connection != null) {
                 connection.close();
+                connection = null;
             }
         } catch (SQLException ex) {
             Logger.getLogger(DerbyWorkRecordDAO.class.getName()).log(Level.SEVERE, null, ex);
@@ -110,7 +112,6 @@ public class SqliteWorkRecodDAO implements WorkRecordDAO{
             
             //connection.commit();
             close();
-
             return acount;
         } catch (SQLException ex) {
             Logger.getLogger(DerbyWorkRecordDAO.class.getName()).log(Level.SEVERE, null, ex);
@@ -170,6 +171,7 @@ public class SqliteWorkRecodDAO implements WorkRecordDAO{
 
     @Override
     public List<WorkRecord> findWorkrecordById(String id) {
+        List<WorkRecord> list = new LinkedList<>();
         try {
             connect();
 
@@ -178,7 +180,7 @@ public class SqliteWorkRecodDAO implements WorkRecordDAO{
             preparedStatement.setString(1, id);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:MM:ss");
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 java.util.Date now = sdf.parse(rs.getString("record_time"));
                 WorkRecord workrecord = new WorkRecord(
                         rs.getString("owner"),
@@ -189,7 +191,7 @@ public class SqliteWorkRecodDAO implements WorkRecordDAO{
                         now,
                         rs.getInt("isDraft")
                 );
-                RECORDS.add(workrecord);
+                list.add(workrecord);
             }
             //connection.commit();
             close();
@@ -198,25 +200,21 @@ public class SqliteWorkRecodDAO implements WorkRecordDAO{
         } catch (ParseException ex) {
             Logger.getLogger(SqliteWorkRecodDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return RECORDS;
+        return list;
     }
 
     @Override
-    public List<WorkRecord> findWorkrecordisDraft(boolean isDraft) {
-        int is;
-        if ( isDraft ) {
-            is = 1;
-        } else {
-            is = 0;
-        }
+    public List<WorkRecord> findWorkrecordisDraft(int isDraft) {
+        List<WorkRecord> list = new LinkedList<>();
         try {
             connect();
             String findByisDraft = "SELECT * FROM workrecords WHERE isDraft = ?;";
             preparedStatement = connection.prepareStatement(findByisDraft);
-            preparedStatement.setInt(1, is);
+            preparedStatement.setInt(1, isDraft);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:MM:ss");
+                System.out.println("从数据库读取是否是草稿："+rs.getInt("isDraft"));
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 java.util.Date now = sdf.parse(rs.getString("record_time"));
                 WorkRecord workrecord = new WorkRecord(
                         rs.getString("owner"),
@@ -227,7 +225,7 @@ public class SqliteWorkRecodDAO implements WorkRecordDAO{
                         now,
                         rs.getInt("isDraft")
                 );
-                RECORDS.add(workrecord);
+                list.add(workrecord);
             }
             //connection.commit();
             close();
@@ -236,7 +234,7 @@ public class SqliteWorkRecodDAO implements WorkRecordDAO{
         } catch (ParseException ex) {
             Logger.getLogger(SqliteWorkRecodDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return RECORDS;
+        return list;
     }
 
     

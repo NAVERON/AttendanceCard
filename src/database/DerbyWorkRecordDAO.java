@@ -169,18 +169,13 @@ public class DerbyWorkRecordDAO implements WorkRecordDAO {  //不同的数据库
     }
     
     @Override
-    public List<WorkRecord> findWorkrecordisDraft(boolean isDraft) {
-        int is;
-        if ( isDraft ) {
-            is = 1;
-        } else {
-            is = 0;
-        }
+    public List<WorkRecord> findWorkrecordisDraft(int isDraft) {
+        
         try {
             connection = DriverManager.getConnection(protocol + dbName);
             RECORDS =  dbAccess.query(connection, "SELECT * FROM workrecords WHERE isDraft = ?",
                     new BeanListHandler<WorkRecord>(WorkRecord.class),
-                    is);
+                    isDraft);
         } catch (SQLException ex) {
             Logger.getLogger(DerbyWorkRecordDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
