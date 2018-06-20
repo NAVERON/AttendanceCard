@@ -42,22 +42,24 @@ public class SqliteWorkRecodDAO implements WorkRecordDAO{
             DatabaseMetaData dbmd = connection.getMetaData();
             ResultSet rs = dbmd.getTables(null, null, null, new String[]{"TABLE"});
             if (!rs.next()) {
-                System.out.println("创建表之前 : ");
                 statement = connection.createStatement();
                 statement.setQueryTimeout(5);
                 statement.executeUpdate(createString);
                 close();
-                System.out.println("创建表之后");
-                Alert close_database_fault = new Alert(Alert.AlertType.INFORMATION);
-                close_database_fault.setContentText("数据库正在创建表");
-                close_database_fault.showAndWait();
+                
+                Alert create_table_alert = new Alert(Alert.AlertType.INFORMATION);
+                create_table_alert.setContentText("数据库正在创建表");
+                create_table_alert.show();
             } else {
-                System.out.println("数据库中表已经存在");
+                Alert table_exist_alert = new Alert(Alert.AlertType.INFORMATION);
+                table_exist_alert.setContentText("数据库表已经存在");
+                table_exist_alert.show();
             }
         } catch (SQLException ex) {
             Logger.getLogger(DerbyWorkRecordDAO.class.getName()).log(Level.SEVERE, null, ex);
-
-            System.out.println("数据库创建失败");
+            Alert create_table_error = new Alert(Alert.AlertType.INFORMATION);
+            create_table_error.setContentText("数据库表已经存在");
+            create_table_error.show();
         }
     }
 
@@ -67,7 +69,6 @@ public class SqliteWorkRecodDAO implements WorkRecordDAO{
             connection = DriverManager.getConnection(protocol + dbName);
         } catch (SQLException ex) {
             Logger.getLogger(DerbyWorkRecordDAO.class.getName()).log(Level.SEVERE, null, ex);
-            System.out.println("数据库连接失败");
         }
     }
 
@@ -88,7 +89,6 @@ public class SqliteWorkRecodDAO implements WorkRecordDAO{
             }
         } catch (SQLException ex) {
             Logger.getLogger(DerbyWorkRecordDAO.class.getName()).log(Level.SEVERE, null, ex);
-            System.out.println("数据库关闭失败");
         }
     }
     

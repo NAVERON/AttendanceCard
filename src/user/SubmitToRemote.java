@@ -11,8 +11,6 @@ public class SubmitToRemote extends Task<WorkRecord> {
 
     @Override
     protected WorkRecord call() throws Exception {
-        // TODO Auto-generated method stub
-        System.out.println("远程提交日志功能后面这里实现");
         return null;
     }
 

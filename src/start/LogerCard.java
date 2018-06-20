@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
 public class LogerCard extends Application {
@@ -29,7 +30,9 @@ public class LogerCard extends Application {
             try {
                 model.close();
             } catch (Exception ex) {
-                System.out.println("数据库关闭异常");
+                Alert close_database_fault = new Alert(Alert.AlertType.WARNING);
+                close_database_fault.setContentText("数据库关闭异常");
+                close_database_fault.show();
                 Logger.getLogger(LogerCard.class.getName()).log(Level.SEVERE, null, ex);
             }
         });

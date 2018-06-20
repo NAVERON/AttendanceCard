@@ -25,12 +25,10 @@ public class RecoderModel {
     }
 
     public void addNewRecord(WorkRecord workRecord){
-        System.out.println("添加的记录数据："+workRecord.toString());
         this.workrecordDAO.insertWorkrecord(workRecord);
     }
     
     public void deleteRecord(WorkRecord workrecord) {
-        System.out.println("将要删除的数据 : " + workrecord.toString());
         this.workrecordDAO.deleteWorkrecord(workrecord);
     }
 
