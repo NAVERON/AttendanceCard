@@ -1,10 +1,14 @@
 package start;
 
+import com.sun.glass.ui.PlatformFactory;
 import java.util.Date;
 import java.util.List;
 
 import user.WorkRecord;
 import database.WorkRecordDAO;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.application.Platform;
 
 /**
  * 连接控制和数据存储的桥接

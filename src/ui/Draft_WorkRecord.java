@@ -29,7 +29,6 @@ public class Draft_WorkRecord extends HBox{
         
         show_btn.setText(this.workrecord.getId());
         this.getChildren().addAll(show_btn, delete_btn);
-        this.setPrefWidth(workrecord.getId().length());
         
         show_btn.setOnAction(event -> {
             System.out.println("单独组建调用显示信息："+workrecord.toString());

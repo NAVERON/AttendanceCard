@@ -31,6 +31,7 @@ public class Submit_WorkRecord extends HBox{
         this.getChildren().addAll(show_btn, delete_btn);
         
         show_btn.setOnAction(event -> {
+            System.out.println("单独组建调用显示信息："+workrecord.toString());
             this.controller.showContent(this.workrecord);
         });
         delete_btn.setOnAction(event -> {

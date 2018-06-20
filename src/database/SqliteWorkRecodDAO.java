@@ -213,7 +213,6 @@ public class SqliteWorkRecodDAO implements WorkRecordDAO{
             preparedStatement.setInt(1, isDraft);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
-                System.out.println("从数据库读取是否是草稿："+rs.getInt("isDraft"));
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 java.util.Date now = sdf.parse(rs.getString("record_time"));
                 WorkRecord workrecord = new WorkRecord(

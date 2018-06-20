@@ -68,25 +68,28 @@ public class MainController implements Initializable {
     private Button test_db;
     
     // 自定义变量
-    private User loggedUser = null; // 指向当前登录的用户
+    private User loggedUser = null; //指向当前登录的用户
     private Stage primaryStage = null;
     private RecoderModel model = null; // 模型里面包含了数据控制，用来后台数据和前台数据的桥接
     private String work_name, system_name, work_content;
     private double work_acount;
+    private VerifyUser verifyUser;
 
     public MainController(Stage primaryStage, RecoderModel model) {
         this.primaryStage = primaryStage;
         this.model = model;
     }
     @FXML
-    public void print_db(){
+    public void print_db() {
         //输出数据库信息
         System.out.println("输出数据库所有数据：");
         List<WorkRecord> drafts = model.getIsDraft(1);
         List<WorkRecord> submits = model.getIsDraft(0);
-        if (drafts != null && submits != null) {
+        if (drafts != null) {
             System.out.println("下面是草稿的数据 : ");
             System.out.println(drafts.toString());
+        }
+        if (submits != null) {
             System.out.println("下面是提交的数据 : ");
             System.out.println(submits.toString());
         }
@@ -205,7 +208,7 @@ public class MainController implements Initializable {
             String name = userName_textfield.getText().trim();
             String password = userPassword_passwordfield.getText().trim();
 
-            VerifyUser verifyUser = new VerifyUser(new User(name, password)); // 新建验证对象，异步处理
+            verifyUser = new VerifyUser(new User(name, password)); // 新建验证对象，异步处理
             userName_textfield.clear();
             userPassword_passwordfield.clear();
             Thread verify = new Thread(verifyUser);
@@ -215,7 +218,6 @@ public class MainController implements Initializable {
                 this.loggedUser = new User(name, password);  //或者爬取用户图片，设置成ImageView
                 this.login_btn.setText(name);
                 loginStage.close();
-                
                 //这里需要独立线程处理，否则会卡住
                 //以前这里新建线程   创建数据表，这个动作在程序启动时已经做好了
             } else {
