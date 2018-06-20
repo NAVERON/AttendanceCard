@@ -43,6 +43,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import ui.Draft_WorkRecord;
 import ui.Submit_WorkRecord;
 import user.SubmitToRemote;
@@ -85,7 +86,7 @@ public class MainController implements Initializable {
     private Button test_db;
     @FXML
     private Button minimum;
-    
+
     // 自定义变量
     private User loggedUser = null; //指向当前登录的用户
     private Stage primaryStage = null;
@@ -98,6 +99,7 @@ public class MainController implements Initializable {
         this.primaryStage = primaryStage;
         this.model = model;
     }
+
     @FXML
     public void print_db() {
         //输出数据库信息
@@ -112,7 +114,7 @@ public class MainController implements Initializable {
             System.out.println(submits.toString());
         }
     }
-    
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         //从数据库读取并更新界面
@@ -128,26 +130,26 @@ public class MainController implements Initializable {
                 submit_list.getChildren().add(new Submit_WorkRecord(workrecord, this));
             }
         }
-        
+
         //print_db();
     }
-    
+
     @FXML
     void save_draft(ActionEvent event) {
         if (!verifyTextArea()) {
             return;
         }
-        if(loggedUser == null){
+        if (loggedUser == null) {
             showLoginStage();
             return;
         }
         WorkRecord workrecord = new WorkRecord(loggedUser.getName(), work_name, system_name, work_acount, work_content, new Date(), 1);
         model.addNewRecord(workrecord);
         draft_list.getChildren().add(new Draft_WorkRecord(workrecord, this));
-        
+
         clearAllTextArea();
     }
-    
+
     @FXML
     void submit(ActionEvent event) {
         if (!verifyTextArea()) {
@@ -160,7 +162,7 @@ public class MainController implements Initializable {
         WorkRecord workrecord = new WorkRecord(loggedUser.getName(), work_name, system_name, work_acount, work_content, new Date(), 0);
         //数据库添加一个记录
         model.addNewRecord(workrecord);
-        
+
         submit_list.getChildren().add(new Submit_WorkRecord(workrecord, this));
         clearAllTextArea();
         //远程提交数据，异步处理，如果出错，重新从数据提取提交
@@ -183,7 +185,7 @@ public class MainController implements Initializable {
         logout_alert.setContentText("即将登出");
         logout_alert.setTitle("登出 ：  " + loggedUser.getName());
         logout_alert.showAndWait();
-        
+
         this.login_btn.setText("登陆");
         this.loggedUser = null;
     }
@@ -247,7 +249,7 @@ public class MainController implements Initializable {
             }
         });
     }
-    
+
     //判断界面上的内容是否填写完整
     public boolean verifyTextArea() {
         work_name = work_1_textarea.getText();
@@ -277,29 +279,29 @@ public class MainController implements Initializable {
         }
         return true;
     }
-    
-    public void showContent(WorkRecord workrecord){
+
+    public void showContent(WorkRecord workrecord) {
         this.work_1_textarea.setText(workrecord.getWork_name());
         this.work_2_textarea.setText(workrecord.getSystem_name());
-        
+
         Double temp_double = workrecord.getWork_acount();
         DecimalFormat df = new DecimalFormat("#,##0.0000");
         this.work_3_textarea.setText(df.format(temp_double));
-        
+
         this.work_4_textarea.setText(workrecord.getWork_content());
     }
-    
-    public void deleteSelected(WorkRecord workrecord, HBox delHBox){
+
+    public void deleteSelected(WorkRecord workrecord, HBox delHBox) {
         //界面更新
-        if(workrecord.isDraft == 1){
+        if (workrecord.isDraft == 1) {
             draft_list.getChildren().remove(delHBox);
-        }else if(workrecord.isDraft == 0){
+        } else if (workrecord.isDraft == 0) {
             submit_list.getChildren().remove(delHBox);
         }
-        
+
         model.deleteRecord(workrecord);
     }
-    
+
     public boolean clearAllTextArea() {
         work_1_textarea.clear();
         work_2_textarea.clear();
@@ -309,35 +311,66 @@ public class MainController implements Initializable {
         return true;
     }
     
+    private boolean min = false;
     @FXML
     void minimum() {
         if (!SystemTray.isSupported()) {
             System.out.println("SystemTray is not supported");
             return;
         }
+        if(min){
+            return;
+        }
+        min = true;
+        primaryStage.hide();
+        
         final PopupMenu popup = new PopupMenu();
+        
         URL url = this.getClass().getResource("..\\assets\\bulb.gif");
         Image image = new ImageIcon(url).getImage();
-
         final TrayIcon trayIcon = new TrayIcon(image);
 
         final SystemTray tray = SystemTray.getSystemTray();
 
         // Create a pop-up menu components
         MenuItem aboutItem = new MenuItem("About");
-        Menu displayMenu = new Menu("Display");
+        MenuItem displayItem = new MenuItem("Display");
         MenuItem exitItem = new MenuItem("Exit");
 
         //Add components to pop-up menu
         popup.add(aboutItem);
-        popup.add(displayMenu);
+        popup.add(displayItem);
         popup.add(exitItem);
 
         trayIcon.setPopupMenu(popup);
-
-        aboutItem.addActionListener(new ActionListener() {
+        trayIcon.addActionListener(new ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent e) {
                 Platform.runLater(() -> primaryStage.show());
+                min = false;
+            }
+        });
+        aboutItem.addActionListener(new ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                Alert about_alert = new Alert(AlertType.INFORMATION);
+                about_alert.setContentText("日志管理系统");
+                about_alert.show();
+            }
+        });
+        displayItem.addActionListener(new ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                Platform.runLater(() -> primaryStage.show());
+                min = false;
+            }
+        });
+        exitItem.addActionListener(new ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                try {
+                    model.close();
+                } catch (Exception ex) {
+                    Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                tray.remove(trayIcon);
+                System.exit(0);
             }
         });
 
