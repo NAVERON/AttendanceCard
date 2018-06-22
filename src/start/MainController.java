@@ -318,10 +318,6 @@ public class MainController implements Initializable {
             System.out.println("SystemTray is not supported");
             return;
         }
-        if(min){
-            return;
-        }
-        min = true;
         primaryStage.hide();
         
         final PopupMenu popup = new PopupMenu();

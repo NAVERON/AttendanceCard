@@ -23,7 +23,8 @@ public class LogerCard extends Application {
         primaryStage.setScene(scene);
         primaryStage.setTitle("LogCard");
         primaryStage.show();
-
+        
+        
         primaryStage.setOnCloseRequest(event -> {
             try {
                 model.close();
