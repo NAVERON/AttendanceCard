@@ -311,7 +311,6 @@ public class MainController implements Initializable {
         return true;
     }
     
-    private boolean min = false;
     @FXML
     void minimum() {
         if (!SystemTray.isSupported()) {
@@ -339,35 +338,39 @@ public class MainController implements Initializable {
         popup.add(exitItem);
 
         trayIcon.setPopupMenu(popup);
-        trayIcon.addActionListener(new ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent e) {
-                Platform.runLater(() -> primaryStage.show());
-                min = false;
-            }
+        trayIcon.addActionListener((java.awt.event.ActionEvent e) -> {
+            primaryStage.show();
+            tray.remove(trayIcon);
         });
-        aboutItem.addActionListener(new ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent e) {
-                Alert about_alert = new Alert(AlertType.INFORMATION);
-                about_alert.setContentText("日志管理系统");
-                about_alert.show();
-            }
-        });
-        displayItem.addActionListener(new ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent e) {
-                Platform.runLater(() -> primaryStage.show());
-                min = false;
-            }
-        });
-        exitItem.addActionListener(new ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent e) {
-                try {
-                    model.close();
-                } catch (Exception ex) {
-                    Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+        aboutItem.addActionListener((java.awt.event.ActionEvent e) -> {
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    Alert about_alert = new Alert(AlertType.INFORMATION);
+                    about_alert.setContentText("日志管理系统");
+                    about_alert.show();
+
+                    Alert verify_alert = new Alert(AlertType.ERROR);
+                    verify_alert.setHeaderText("工作量输入错误");
+                    verify_alert.setContentText("请在工作量输入框输入数字");
+                    verify_alert.setTitle("验证输入内容");
+                    verify_alert.showAndWait();
                 }
-                tray.remove(trayIcon);
-                System.exit(0);
+            });
+        });
+        displayItem.addActionListener((java.awt.event.ActionEvent e) -> {
+            primaryStage.show();
+            tray.remove(trayIcon);
+        });
+        exitItem.addActionListener((java.awt.event.ActionEvent e) -> {
+            try {
+                model.close();
+            } catch (Exception ex) {
+                Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
             }
+            
+            tray.remove(trayIcon);
+            System.exit(0);
         });
 
         try {
