@@ -17,6 +17,8 @@ import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -310,7 +312,8 @@ public class MainController implements Initializable {
 
         return true;
     }
-    
+
+    private Timer notificationTimer = new Timer();
     @FXML
     void minimum() {
         if (!SystemTray.isSupported()) {
@@ -319,12 +322,12 @@ public class MainController implements Initializable {
         }
         primaryStage.hide();
         
+        java.awt.Toolkit.getDefaultToolkit();
         final PopupMenu popup = new PopupMenu();
         
         URL url = this.getClass().getResource("..\\assets\\bulb.gif");
         Image image = new ImageIcon(url).getImage();
         final TrayIcon trayIcon = new TrayIcon(image);
-
         final SystemTray tray = SystemTray.getSystemTray();
 
         // Create a pop-up menu components
@@ -338,29 +341,26 @@ public class MainController implements Initializable {
         popup.add(exitItem);
 
         trayIcon.setPopupMenu(popup);
-        trayIcon.addActionListener((java.awt.event.ActionEvent e) -> {
-            primaryStage.show();
-            tray.remove(trayIcon);
+        trayIcon.addActionListener((event) -> {
+            Platform.runLater(() -> {
+                notificationTimer.cancel();
+                primaryStage.show();
+                tray.remove(trayIcon);
+            });
         });
-        aboutItem.addActionListener((java.awt.event.ActionEvent e) -> {
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    Alert about_alert = new Alert(AlertType.INFORMATION);
-                    about_alert.setContentText("日志管理系统");
-                    about_alert.show();
-
-                    Alert verify_alert = new Alert(AlertType.ERROR);
-                    verify_alert.setHeaderText("工作量输入错误");
-                    verify_alert.setContentText("请在工作量输入框输入数字");
-                    verify_alert.setTitle("验证输入内容");
-                    verify_alert.showAndWait();
-                }
+        aboutItem.addActionListener((event) -> {
+            Platform.runLater(() -> {
+                Alert about_alert = new Alert(AlertType.INFORMATION);
+                about_alert.setContentText("日志管理系统");
+                about_alert.showAndWait();
             });
         });
         displayItem.addActionListener((java.awt.event.ActionEvent e) -> {
-            primaryStage.show();
-            tray.remove(trayIcon);
+            Platform.runLater(() -> {
+                notificationTimer.cancel();
+                primaryStage.show();
+                tray.remove(trayIcon);
+            });
         });
         exitItem.addActionListener((java.awt.event.ActionEvent e) -> {
             try {
@@ -369,7 +369,9 @@ public class MainController implements Initializable {
                 Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
             }
             
+            notificationTimer.cancel();
             tray.remove(trayIcon);
+            Platform.exit();
             System.exit(0);
         });
 
@@ -378,5 +380,19 @@ public class MainController implements Initializable {
         } catch (AWTException e) {
             System.out.println("TrayIcon could not be added.");
         }
+
+        //执行后台定是程序
+        notificationTimer.schedule( new TimerTask() {  //这个不能重复启动，后面再修改
+            @Override
+            public void run() {
+                javax.swing.SwingUtilities.invokeLater(()
+                        -> trayIcon.displayMessage(
+                                "hello",
+                                "The time is now " + new Date().toString(),
+                                java.awt.TrayIcon.MessageType.INFO
+                        )
+                );
+            }
+        }, 2000, 10000 );
     }
 }

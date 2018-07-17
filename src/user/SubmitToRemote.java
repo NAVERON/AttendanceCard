@@ -11,6 +11,7 @@ public class SubmitToRemote extends Task<WorkRecord> {
 
     @Override
     protected WorkRecord call() throws Exception {
+        System.out.println("remote submit");
         return null;
     }
 

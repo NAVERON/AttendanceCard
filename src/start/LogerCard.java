@@ -4,6 +4,7 @@ import database.SqliteWorkRecodDAO;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -24,8 +25,9 @@ public class LogerCard extends Application {
         primaryStage.setTitle("LogCard");
         primaryStage.show();
         
-        
+        Platform.setImplicitExit(false);
         primaryStage.setOnCloseRequest(event -> {
+            Platform.setImplicitExit(true);
             try {
                 model.close();
             } catch (Exception ex) {
@@ -34,6 +36,8 @@ public class LogerCard extends Application {
                 close_database_fault.show();
                 Logger.getLogger(LogerCard.class.getName()).log(Level.SEVERE, null, ex);
             }
+            Platform.exit();
+            System.exit(0);
         });
     }
 
