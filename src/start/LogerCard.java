@@ -24,7 +24,7 @@ public class LogerCard extends Application {
         Scene scene = new Scene(loader.load());
         primaryStage.setScene(scene);
         primaryStage.setTitle("LogCard");
-        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("../ui/amarok.png")));  //这种是相对路径
+        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("../assets/amarok.png")));  //这种是相对路径
         primaryStage.show();
         
         Platform.setImplicitExit(false);
