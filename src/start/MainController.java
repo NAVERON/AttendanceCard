@@ -313,7 +313,7 @@ public class MainController implements Initializable {
         return true;
     }
 
-    private Timer notificationTimer = new Timer();
+    private Timer notificationTimer = null;
     @FXML
     void minimum() {
         if (!SystemTray.isSupported()) {
@@ -343,7 +343,10 @@ public class MainController implements Initializable {
         trayIcon.setPopupMenu(popup);
         trayIcon.addActionListener((event) -> {
             Platform.runLater(() -> {
-                notificationTimer.cancel();
+                if(notificationTimer != null){
+                    notificationTimer.cancel();
+                    notificationTimer = null;
+                }
                 primaryStage.show();
                 tray.remove(trayIcon);
             });
@@ -357,7 +360,10 @@ public class MainController implements Initializable {
         });
         displayItem.addActionListener((java.awt.event.ActionEvent e) -> {
             Platform.runLater(() -> {
-                notificationTimer.cancel();
+                if (notificationTimer != null) {
+                    notificationTimer.cancel();
+                    notificationTimer = null;
+                }
                 primaryStage.show();
                 tray.remove(trayIcon);
             });
@@ -370,6 +376,7 @@ public class MainController implements Initializable {
             }
             
             notificationTimer.cancel();
+            notificationTimer = null;
             tray.remove(trayIcon);
             Platform.exit();
             System.exit(0);
@@ -382,6 +389,9 @@ public class MainController implements Initializable {
         }
 
         //执行后台定是程序
+        if(notificationTimer == null){
+            notificationTimer = new Timer();
+        }
         notificationTimer.schedule( new TimerTask() {  //这个不能重复启动，后面再修改
             @Override
             public void run() {
@@ -393,6 +403,6 @@ public class MainController implements Initializable {
                         )
                 );
             }
-        }, 2000, 10000 );
+        }, 0, 10000 );
     }
 }
