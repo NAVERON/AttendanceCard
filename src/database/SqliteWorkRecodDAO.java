@@ -47,19 +47,19 @@ public class SqliteWorkRecodDAO implements WorkRecordDAO{
                 statement.executeUpdate(createString);
                 close();
                 
-                Alert create_table_alert = new Alert(Alert.AlertType.INFORMATION);
-                create_table_alert.setContentText("数据库正在创建表");
-                create_table_alert.show();
+//                Alert create_table_alert = new Alert(Alert.AlertType.INFORMATION);
+//                create_table_alert.setContentText("数据库正在创建表");
+//                create_table_alert.show();
             } else {
-                Alert table_exist_alert = new Alert(Alert.AlertType.INFORMATION);
-                table_exist_alert.setContentText("数据库表已经存在");
-                table_exist_alert.show();
+//                Alert table_exist_alert = new Alert(Alert.AlertType.INFORMATION);
+//                table_exist_alert.setContentText("数据库表已经存在");
+//                table_exist_alert.show();
             }
         } catch (SQLException ex) {
             Logger.getLogger(DerbyWorkRecordDAO.class.getName()).log(Level.SEVERE, null, ex);
-            Alert create_table_error = new Alert(Alert.AlertType.INFORMATION);
-            create_table_error.setContentText("数据库表已经存在");
-            create_table_error.show();
+//            Alert create_table_error = new Alert(Alert.AlertType.INFORMATION);
+//            create_table_error.setContentText("数据库表已经存在");
+//            create_table_error.show();
         }
     }
 
