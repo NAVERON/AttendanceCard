@@ -26,9 +26,11 @@ import javafx.application.Platform;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -250,6 +252,22 @@ public class MainController implements Initializable {
                 login_error_alert.showAndWait();
             }
         });
+        
+        ///////////////////////////////////////////////////////////////////////////////////
+        Stage LoginStage = new Stage();
+        Parent LoginParent = null;
+        try {
+            LoginParent = FXMLLoader.load(getClass().getResource("/ui/login.fxml")); //    /library/assistant/ui/login/login.fxml
+        } catch (IOException ex) {
+            Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        Scene LoginScene = new Scene(LoginParent);
+
+        LoginStage.setScene(scene);
+        LoginStage.show();
+        LoginStage.setTitle("LoginRecordSystem");
+        
     }
 
     //判断界面上的内容是否填写完整
