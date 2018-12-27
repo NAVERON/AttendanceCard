@@ -1,16 +1,11 @@
 package start;
 
 import java.awt.AWTException;
-import java.awt.CheckboxMenuItem;
 import java.awt.Image;
-import java.awt.Menu;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.SystemTray;
-import java.awt.Toolkit;
 import java.awt.TrayIcon;
-import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.text.DecimalFormat;
@@ -28,32 +23,26 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
 import ui.Draft_WorkRecord;
 import ui.Submit_WorkRecord;
 import user.SubmitToRemote;
 import user.User;
 import user.VerifyUser;
 import user.WorkRecord;
+
+import com.jfoenix.controls.JFXPasswordField;
+import com.jfoenix.controls.JFXTextField;
 
 public class MainController implements Initializable {
 
@@ -90,7 +79,12 @@ public class MainController implements Initializable {
     private Button test_db;
     @FXML
     private Button minimum;
-
+    
+    @FXML
+    private JFXTextField username_jfxTextfield;
+    @FXML
+    private JFXPasswordField password_jfxTextfield;
+    
     // 自定义变量
     private User loggedUser = null; //指向当前登录的用户
     private Stage primaryStage = null;
@@ -205,69 +199,49 @@ public class MainController implements Initializable {
         webview.setScene(scene);
         webview.show();
     }
-
+    
     public void showLoginStage() {
-        Stage loginStage = new Stage();
-        loginStage.initModality(Modality.WINDOW_MODAL);
-        loginStage.initOwner(primaryStage);
-
-        VBox root = new VBox();
-        root.setPadding(new Insets(10));
-        root.setAlignment(Pos.CENTER);
-        Label prompt_label = new Label("请输入用户名和密码");
-        TextField userName_textfield = new TextField();
-        userName_textfield.setPromptText("输入用户名");
-        PasswordField userPassword_passwordfield = new PasswordField();
-        userPassword_passwordfield.setPromptText("输入密码");
-
-        Button signin_btn = new Button();
-        signin_btn.setText("签到");
-
-        root.getChildren().addAll(prompt_label, userName_textfield, userPassword_passwordfield, signin_btn);
-        Scene scene = new Scene(root, 250, 150);
-        loginStage.setScene(scene);
-        loginStage.show();
-
-        signin_btn.setOnAction(event -> {
-            String name = userName_textfield.getText().trim();
-            String password = userPassword_passwordfield.getText().trim();
-
-            verifyUser = new VerifyUser(new User(name, password)); // 新建验证对象，异步处理
-            userName_textfield.clear();
-            userPassword_passwordfield.clear();
-            Thread verify = new Thread(verifyUser);
-            //verify.start();
-
-            if (verifyUser.isCorrect()) {
-                this.loggedUser = new User(name, password);  //或者爬取用户图片，设置成ImageView
-                this.login_btn.setText(name);
-                loginStage.close();
-                //这里需要独立线程处理，否则会卡住
-                //以前这里新建线程   创建数据表，这个动作在程序启动时已经做好了
-            } else {
-                Alert login_error_alert = new Alert(AlertType.ERROR);
-                login_error_alert.setHeaderText("签到错误");
-                login_error_alert.setContentText("请输入正确的用户名和密码");
-                login_error_alert.setTitle("错误");
-                login_error_alert.showAndWait();
-            }
-        });
         
-        ///////////////////////////////////////////////////////////////////////////////////
         Stage LoginStage = new Stage();
-        Parent LoginParent = null;
+        LoginStage.initOwner(primaryStage);
+        
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("../ui/Login.fxml"));
+        loader.setController(this);
         try {
-            LoginParent = FXMLLoader.load(getClass().getResource("/ui/login.fxml")); //    /library/assistant/ui/login/login.fxml
+            LoginStage.setScene(new Scene(loader.load()));
         } catch (IOException ex) {
             Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        Scene LoginScene = new Scene(LoginParent);
-
-        LoginStage.setScene(scene);
         LoginStage.show();
         LoginStage.setTitle("LoginRecordSystem");
         
+    }
+    
+    public void handleLoginEvent(ActionEvent event){
+        String name = username_jfxTextfield.getText().trim();
+        String password = password_jfxTextfield.getText().trim();
+        verifyUser = new VerifyUser(new User(name, password)); // 新建验证对象，异步处理
+        username_jfxTextfield.clear();
+        password_jfxTextfield.clear();
+        Thread verify = new Thread(verifyUser);
+        //verify.start();
+        
+        if (verifyUser.isCorrect()) {
+            this.loggedUser = new User(name, password);  //或者爬取用户图片，设置成ImageView
+            this.login_btn.setText(name);
+            closeLoginStage();
+            //这里需要独立线程处理，否则会卡住
+            //以前这里新建线程   创建数据表，这个动作在程序启动时已经做好了
+        } else {
+            username_jfxTextfield.getStyleClass().add("wrong-credentials");
+            password_jfxTextfield.getStyleClass().add("wrong-credentials");
+        }
+    }
+    private void closeLoginStage(){
+        ((Stage) username_jfxTextfield.getScene().getWindow()).close();
+    }
+    public void handleCancelEvent(ActionEvent event){
+        closeLoginStage();
     }
 
     //判断界面上的内容是否填写完整
