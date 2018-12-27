@@ -92,7 +92,7 @@ public class MainController implements Initializable {
     private String work_name, system_name, work_content;
     private double work_acount;
     private VerifyUser verifyUser;
-
+    
     public MainController(Stage primaryStage, RecoderModel model) {
         this.primaryStage = primaryStage;
         this.model = model;
@@ -131,7 +131,7 @@ public class MainController implements Initializable {
 
         //print_db();
     }
-
+    
     @FXML
     void save_draft(ActionEvent event) {
         if (!verifyTextArea()) {
